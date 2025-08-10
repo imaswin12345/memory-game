@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './MemoryGame.css';
 
-
 // Image data - update these to match your actual image files
 const cardImages = [
   { src: '/images/emoji1.png', matched: false },
@@ -82,7 +81,7 @@ function MemoryGame() {
                 src={card.src} 
                 alt="Card" 
                 onError={(e) => {
-                  e.target.src = '/images/default.png'; // Fallback if image fails to load
+                  e.target.src = '/images/default.png';
                 }}
               />
             </div>
