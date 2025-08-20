@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './MemoryGame.css';
+import { Link } from 'react-router-dom';
 
 // Image data - update these to match your actual image files
 const cardImages = [
@@ -17,6 +18,7 @@ function MemoryGame() {
   const [choiceOne, setChoiceOne] = useState(null);
   const [choiceTwo, setChoiceTwo] = useState(null);
   const [disabled, setDisabled] = useState(false);
+  const [gameFinished, setGameFinished] = useState(false);
 
   const shuffleCards = () => {
     const shuffledCards = [...cardImages, ...cardImages]
@@ -27,6 +29,7 @@ function MemoryGame() {
     setTurns(0);
     setChoiceOne(null);
     setChoiceTwo(null);
+    setGameFinished(false);
   };
 
   useEffect(() => {
@@ -42,20 +45,24 @@ function MemoryGame() {
     if (choiceOne && choiceTwo) {
       setDisabled(true);
       if (choiceOne.src === choiceTwo.src) {
-        setCards(prevCards => {
-          return prevCards.map(card => {
-            if (card.src === choiceOne.src) {
-              return { ...card, matched: true };
-            }
-            return card;
-          });
-        });
+        setCards(prevCards =>
+          prevCards.map(card =>
+            card.src === choiceOne.src ? { ...card, matched: true } : card
+          )
+        );
         resetTurn();
       } else {
         setTimeout(resetTurn, 1000);
       }
     }
   }, [choiceOne, choiceTwo]);
+
+  // check if all cards are matched
+  useEffect(() => {
+    if (cards.length > 0 && cards.every(card => card.matched)) {
+      setGameFinished(true);
+    }
+  }, [cards]);
 
   const resetTurn = () => {
     setChoiceOne(null);
@@ -67,7 +74,15 @@ function MemoryGame() {
   return (
     <div className="memory-game">
       <h1>Memory Game</h1>
-      <button onClick={shuffleCards}>New Game</button>
+      
+      <div className='buttons'>
+        <button onClick={shuffleCards}>New Game</button>
+        {gameFinished && (
+          <Link to={'/reward'}>
+            <button> congratulations here is REWARD FOR YOU &#128515;</button>
+          </Link>
+        )}
+      </div>
       
       <div className="card-grid">
         {cards.map(card => (
